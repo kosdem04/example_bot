@@ -11,6 +11,11 @@ main = ReplyKeyboardMarkup(keyboard=[
 ], resize_keyboard=True)
 
 
+
+cancel = ReplyKeyboardMarkup(keyboard=[
+    [KeyboardButton(text='Отмена')],
+], resize_keyboard=True)
+
 async def categories():
     all_categories = await db.get_categories()
     keyboard = InlineKeyboardBuilder()

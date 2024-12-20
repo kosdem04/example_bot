@@ -11,7 +11,7 @@ from config import DB_URL
 engine = create_async_engine(url=DB_URL,
                              echo=True)
 
-async_session = async_sessionmaker(engine)
+async_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -25,6 +25,7 @@ class User(Base):
     tg_id = mapped_column(BigInteger)
     age: Mapped[int]
     basket: Mapped[List["Basket"]] = relationship(back_populates="user", cascade='all, delete')
+    language: Mapped[List["Language"]] = relationship(back_populates="user", cascade='all, delete')
 
 
 
@@ -57,6 +58,15 @@ class Basket(Base):
     item_id: Mapped[int] = mapped_column(ForeignKey('items.id', ondelete='CASCADE'))
     user: Mapped["User"] = relationship(back_populates="basket")
     item: Mapped["Item"] = relationship(back_populates="basket")
+
+
+class Language(Base):
+    __tablename__ = 'language'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
+    lang_code: Mapped[str] = mapped_column(String(5))
+    user: Mapped["User"] = relationship(back_populates="language")
 
 
 async def async_main():

@@ -3,20 +3,25 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardMarkup, ReplyKeyb
 from aiogram.filters import CommandStart, Command
 import random
 import geopy
-
 from aiogram.fsm.context import FSMContext
-
 import app.keyboards as kb
 import app.states as st
 import app.database.requests as db
+from app.middlewares import LocalizationMiddleware
 
 router = Router()
+router.message.middleware(LocalizationMiddleware())
+# router.callback_query.middleware(LocalizationMiddleware)
 
 
 @router.message(CommandStart())
-async def cmd_start(message: Message):
-    await message.answer('Добро пожаловать в магазин кроссовок!',
-                         reply_markup=kb.main)
+async def cmd_start(message: Message, language: str):
+    if language == 'ru':
+        await message.answer('Добро пожаловать в магазин кроссовок!',
+                             reply_markup=kb.main)
+    else:
+        await message.answer('Welcome!',
+                             reply_markup=kb.main)
 
 
 @router.message(F.text == 'Каталог')
